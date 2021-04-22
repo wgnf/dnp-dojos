@@ -39,7 +39,7 @@ namespace CltCalculator.Tests.Parsing.Parts
             
             Assert.True(couldParse);
             
-            Assert.Equal(SymbolType.Constant, symbol.SymbolType);
+            Assert.Equal(SymbolType.Constant, symbol.Type);
             Assert.Equal(expectedValue, symbol.Value);
         }
     }

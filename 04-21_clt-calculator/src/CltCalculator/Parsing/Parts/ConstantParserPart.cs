@@ -8,6 +8,8 @@ namespace CltCalculator.Parsing.Parts
 {
     public class ConstantParserPart : IParserPart
     {
+        public bool ParsesOperations => false;
+
         public bool TryParse(string expression, int currentPosition, out Symbol symbol)
         {
             if (string.IsNullOrWhiteSpace(expression))
@@ -28,19 +30,29 @@ namespace CltCalculator.Parsing.Parts
         private static string ParseConstant(string expression, int currentPosition)
         {
             var stringBuilder = new StringBuilder();
-
+            var firstRound = true;
+            
             while (currentPosition < expression.Length)
             {
                 char result;
-                var couldParse = currentPosition + 1 < expression.Length
-                    ? TryParseCurrentCharWhenNextAvailable(expression, currentPosition, out result)
-                    : TryParseCurrentCharWhenNextUnavailable(expression, currentPosition, out result);
+                bool couldParse;
+                var nextAvailable = currentPosition + 1 < expression.Length;
+
+                couldParse = nextAvailable switch
+                {
+                    true when firstRound => TryParseCurrentCharFirstRoundAndNextAvailable(expression, currentPosition,
+                        out result),
+                    true => TryParseCurrentCharWhenNextAvailable(expression, currentPosition, out result),
+                    _ => TryParseCurrentCharWhenNextUnavailable(expression, currentPosition, out result)
+                };
 
                 if (couldParse)
                 {
                     stringBuilder.Append(result);
 
                     currentPosition++;
+                    firstRound = false;
+                    
                     continue;
                 }
 
@@ -48,6 +60,29 @@ namespace CltCalculator.Parsing.Parts
             }
 
             return stringBuilder.ToString();
+        }
+
+        private static bool TryParseCurrentCharFirstRoundAndNextAvailable(
+            string expression,
+            int currentPosition,
+            out char parsedChar)
+        {
+            var currentChar = expression[currentPosition];
+            var nextChar = expression[currentPosition + 1];
+            parsedChar = currentChar;
+
+            var isCurrentPlusOrMinus = currentChar == '+' || currentChar == '-';
+            var isNextDotOrNumber = nextChar == '.' || IsNumber(nextChar);
+
+            // something like:
+            // +111
+            // -111
+            // +.111
+            // -.111
+            if (isCurrentPlusOrMinus && isNextDotOrNumber)
+                return true;
+            
+            return TryParseCurrentCharWhenNextAvailable(expression, currentPosition, out parsedChar);
         }
 
         private static bool TryParseCurrentCharWhenNextAvailable(
@@ -59,21 +94,13 @@ namespace CltCalculator.Parsing.Parts
             var nextChar = expression[currentPosition + 1];
             parsedChar = currentChar;
 
-            switch (currentChar)
-            {
-                // something like:
-                // +111
-                // -111
-                // +.111
-                // -.111
-                case '+' or '-' when nextChar == '.' || IsNumber(nextChar):
-                // something like:
-                // .111
-                case '.' when IsNumber(nextChar):
-                    return true;
-                default:
-                    return TryParseCurrentCharWhenNextUnavailable(expression, currentPosition, out parsedChar);
-            }
+            var isCurrentDot = currentChar == '.';
+            var isNextANumber = IsNumber(nextChar);
+
+            if (isCurrentDot && isNextANumber)
+                return true;
+
+            return TryParseCurrentCharWhenNextUnavailable(expression, currentPosition, out parsedChar);
         }
 
         private static bool TryParseCurrentCharWhenNextUnavailable(

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CltCalculator.Contracts.Parsing;
 using CltCalculator.Exceptions;
 using CltCalculator.Models;
@@ -22,6 +23,7 @@ namespace CltCalculator.Parsing
 
             var symbols = new List<Symbol>();
             var currentPosition = 0;
+            var operationExpected = false;
             
             while (currentPosition < expression.Length)
             {
@@ -31,9 +33,11 @@ namespace CltCalculator.Parsing
                     continue;
                 }
 
-                var symbol = ParseCurrent(expression, currentPosition);
+                var symbol = ParseCurrent(expression, currentPosition, operationExpected);
                 currentPosition += symbol.Length;
                 symbols.Add(symbol);
+
+                operationExpected = symbol.Type == SymbolType.Constant;
             }
             
             return symbols;
@@ -44,19 +48,19 @@ namespace CltCalculator.Parsing
             return char.IsWhiteSpace(@char);
         }
 
-        private Symbol ParseCurrent(string expression, int currentPosition)
+        private Symbol ParseCurrent(string expression, int currentPosition, bool operationExpected)
         {
             Symbol symbol = null;
             var resultFound = false;
             
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var parserPart in _parserParts)
+            foreach (var parserPart in _parserParts.Where(pp => pp.ParsesOperations == operationExpected))
                 resultFound = resultFound || parserPart.TryParse(expression, currentPosition, out symbol);
 
             if (symbol != null)
                 return symbol;
             
-            throw new ParseUnexpectedSymbolException(expression[currentPosition], currentPosition);
+            throw new ParseUnexpectedSymbolException(expression[currentPosition], currentPosition, operationExpected);
         }
     }
 }

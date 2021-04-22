@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using CltCalculator.Contracts.Parsing;
 using CltCalculator.Exceptions;
 using CltCalculator.Models;
 using CltCalculator.Parsing;
+using CltCalculator.Parsing.Parts;
+using FluentAssertions;
 using Moq;
 using Xunit;
 using Xunit.Sdk;
@@ -28,7 +31,7 @@ namespace CltCalculator.Tests.Parsing
             var sut = new Parser(new[] {parserPart.Object});
 
             const string expression = "something";
-            var expectedSymbol = new Symbol(SymbolType.Constant, 1);
+            var expectedSymbol = new Symbol(SymbolType.Constant, 1, expression.Length);
 
             parserPart
                 .Setup(pp =>
@@ -74,6 +77,66 @@ namespace CltCalculator.Tests.Parsing
                 .Verify(
                     pp => pp.TryParse(It.IsAny<string>(), It.IsAny<int>(),
                         out symbol), Times.Never);
+        }
+
+        [Fact]
+        [Category("Integration")]
+        public void Should_Parse_In_Combination_With_Spaces()
+        {
+            var constantParserPart = new ConstantParserPart();
+            var operationParserPart = new OperationParserPart();
+
+            var sut = new Parser(new IParserPart[]
+            {
+                constantParserPart,
+                operationParserPart
+            });
+
+            const string expression = "1 + 2 + 3";
+
+            object[] expectedSymbols =
+            {
+                new Symbol(SymbolType.Constant, 0, 1, 1),
+                new Symbol(SymbolType.Addition, 2),
+                new Symbol(SymbolType.Constant, 4, 1, 2),
+                new Symbol(SymbolType.Addition, 6),
+                new Symbol(SymbolType.Constant, 8, 1, 3)
+            };
+            var actualSymbols = sut.Parse(expression);
+
+            actualSymbols
+                .Should()
+                .BeEquivalentTo(expectedSymbols);
+        }
+
+        [Fact]
+        [Category("Integration")]
+        public void Should_Parse_In_Combination_Without_Spaces()
+        {
+            var constantParserPart = new ConstantParserPart();
+            var operationParserPart = new OperationParserPart();
+
+            var sut = new Parser(new IParserPart[]
+            {
+                constantParserPart,
+                operationParserPart
+            });
+
+            const string expression = "1+2+3";
+
+            object[] expectedSymbols =
+            {
+                new Symbol(SymbolType.Constant, 0, 1, 1),
+                new Symbol(SymbolType.Addition, 1),
+                new Symbol(SymbolType.Constant, 2, 1, 2),
+                new Symbol(SymbolType.Addition, 3),
+                new Symbol(SymbolType.Constant, 4, 1, 3)
+            };
+            var actualSymbols = sut.Parse(expression);
+
+            actualSymbols
+                .Should()
+                .BeEquivalentTo(expectedSymbols);
         }
     }
 }

@@ -2,6 +2,10 @@
 {
     public enum SymbolType
     {
-        Constant
+        Constant,
+        Addition,
+        Subtraction,
+        Multiplication,
+        Division
     }
 }

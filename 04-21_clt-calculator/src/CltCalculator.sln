@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CltCalculator", "CltCalculator\CltCalculator.csproj", "{AB6B952F-A5CE-4E45-8777-7B7576490702}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CltCalculator.Tests", "CltCalculator.Tests\CltCalculator.Tests.csproj", "{2055CFE8-2891-40B9-88BB-31F2C2B1912B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{AB6B952F-A5CE-4E45-8777-7B7576490702}.Release|x64.Build.0 = Release|Any CPU
 		{AB6B952F-A5CE-4E45-8777-7B7576490702}.Release|x86.ActiveCfg = Release|Any CPU
 		{AB6B952F-A5CE-4E45-8777-7B7576490702}.Release|x86.Build.0 = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|x64.Build.0 = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Debug|x86.Build.0 = Debug|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|x64.ActiveCfg = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|x64.Build.0 = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|x86.ActiveCfg = Release|Any CPU
+		{2055CFE8-2891-40B9-88BB-31F2C2B1912B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

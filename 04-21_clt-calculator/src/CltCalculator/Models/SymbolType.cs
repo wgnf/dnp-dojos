@@ -1,4 +1,4 @@
-﻿namespace CltCalculator
+﻿namespace CltCalculator.Models
 {
     public enum SymbolType
     {

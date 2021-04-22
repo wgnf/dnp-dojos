@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CltCalculator
+namespace CltCalculator.Exceptions
 {
     public class ParseUnexpectedSymbolException : Exception
     {

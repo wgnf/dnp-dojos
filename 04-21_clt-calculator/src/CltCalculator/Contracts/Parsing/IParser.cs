@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using CltCalculator.Models;
 
-namespace CltCalculator
+namespace CltCalculator.Contracts.Parsing
 {
     public interface IParser
     {

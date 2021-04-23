@@ -18,7 +18,6 @@ namespace CltCalculator.Parsing.Parts
             var startingPosition = currentPosition;
             symbol = null;
 
-
             var result = ParseConstant(expression, currentPosition);
             if (string.IsNullOrWhiteSpace(result))
                 return false;
@@ -35,10 +34,9 @@ namespace CltCalculator.Parsing.Parts
             while (currentPosition < expression.Length)
             {
                 char result;
-                bool couldParse;
                 var nextAvailable = currentPosition + 1 < expression.Length;
 
-                couldParse = nextAvailable switch
+                var couldParse = nextAvailable switch
                 {
                     true when firstRound => TryParseCurrentCharFirstRoundAndNextAvailable(expression, currentPosition,
                         out result),

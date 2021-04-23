@@ -23,6 +23,7 @@ namespace CltCalculator.Tests.Calculation
         {
             var sut = new Calculator();
 
+            // + +
             var twoOperations = new[]
             {
                 new Symbol(SymbolType.Addition, 0),
@@ -31,6 +32,7 @@ namespace CltCalculator.Tests.Calculation
 
             Assert.Throws<InvalidOperationException>(() => sut.Calculate(twoOperations));
 
+            // 42 1337
             var twoConstants = new[]
             {
                 new Symbol(SymbolType.Constant, 0, 1, 42),
@@ -62,6 +64,7 @@ namespace CltCalculator.Tests.Calculation
         {
             var sut = new Calculator();
 
+            // 1 + 1
             var symbols = new[]
             {
                 new Symbol(SymbolType.Constant, 0, 1, 1),
@@ -80,6 +83,7 @@ namespace CltCalculator.Tests.Calculation
         {
             var sut = new Calculator();
 
+            // 1 + 2 * 3 / 4 - 5
             var symbols = new[]
             {
                 new Symbol(SymbolType.Constant, 0, 1, 1),

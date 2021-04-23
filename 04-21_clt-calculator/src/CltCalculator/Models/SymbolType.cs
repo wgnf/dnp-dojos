@@ -7,6 +7,7 @@
         Subtraction,
         Multiplication,
         Division,
+        Exponent,
         
         OpenParenthesis,
         CloseParenthesis

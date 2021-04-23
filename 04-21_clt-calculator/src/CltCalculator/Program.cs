@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using CltCalculator.Calculation;
 using CltCalculator.Contracts.Calculation;
 using CltCalculator.Contracts.Parsing;
@@ -23,7 +24,7 @@ namespace CltCalculator
                 try
                 {
                     var result = Calculate(expression);
-                    Console.WriteLine($"Result: {result}\n\n");
+                    Console.WriteLine($"Result: {result.ToString(CultureInfo.InvariantCulture)}\n\n");
                 }
                 catch (Exception e)
                 {

@@ -119,12 +119,19 @@ namespace CltCalculator.Calculation
 
         private static bool TryFindOperation(IList<Symbol> symbols, out Symbol operation)
         {
-            var found = TryFindMultiplication(symbols, out operation);
+            var found = TryFindExponent(symbols, out operation);
+            found = found || TryFindMultiplication(symbols, out operation);
             found = found || TryFindDivision(symbols, out operation);
             found = found || TryFindAddition(symbols, out operation);
             found = found || TryFindSubtraction(symbols, out operation);
 
             return found;
+        }
+
+        private static bool TryFindExponent(IEnumerable<Symbol> symbols, out Symbol exponentSymbol)
+        {
+            exponentSymbol = symbols.FirstOrDefault(s => s.Type == SymbolType.Exponent);
+            return exponentSymbol != null;
         }
 
         private static bool TryFindMultiplication(IEnumerable<Symbol> symbols, out Symbol multiplicationSymbol)
@@ -216,6 +223,7 @@ namespace CltCalculator.Calculation
                 SymbolType.Subtraction => valueLeft - valueRight,
                 SymbolType.Multiplication => valueLeft * valueRight,
                 SymbolType.Division => valueLeft / valueRight,
+                SymbolType.Exponent => Convert.ToDecimal(Math.Pow(Convert.ToDouble(valueLeft), Convert.ToDouble(valueRight))),
                 _ => throw new ArgumentOutOfRangeException(
                     $"{nameof(operation)}.{nameof(operation.Type)}",
                     $"Did not expect {operation.Type} in {nameof(CalculateOperation)}")

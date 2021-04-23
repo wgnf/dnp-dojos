@@ -39,6 +39,9 @@ namespace CltCalculator.Parsing.Parts
                 case '/':
                     symbolType = SymbolType.Division;
                     break;
+                case '^':
+                    symbolType = SymbolType.Exponent;
+                    break;
                 default:
                     return false;
             }

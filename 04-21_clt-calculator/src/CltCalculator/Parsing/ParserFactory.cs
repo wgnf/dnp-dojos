@@ -10,7 +10,8 @@ namespace CltCalculator.Parsing
             var parts = new IParserPart[]
             {
                 new ConstantParserPart(),
-                new OperationParserPart()
+                new OperationParserPart(),
+                new ParenthesisParserPart()
             };
             return new Parser(parts);
         }

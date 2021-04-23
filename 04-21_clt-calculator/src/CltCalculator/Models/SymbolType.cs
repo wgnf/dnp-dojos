@@ -6,6 +6,9 @@
         Addition,
         Subtraction,
         Multiplication,
-        Division
+        Division,
+        
+        OpenParenthesis,
+        CloseParenthesis
     }
 }

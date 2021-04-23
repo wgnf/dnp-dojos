@@ -37,7 +37,7 @@ namespace CltCalculator.Parsing
                 currentPosition += symbol.Length;
                 symbols.Add(symbol);
 
-                operationExpected = symbol.Type == SymbolType.Constant;
+                operationExpected = symbol.Type == SymbolType.Constant || symbol.Type == SymbolType.CloseParenthesis;
             }
             
             return symbols;
@@ -54,7 +54,7 @@ namespace CltCalculator.Parsing
             var resultFound = false;
             
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var parserPart in _parserParts.Where(pp => pp.ParsesOperations == operationExpected))
+            foreach (var parserPart in _parserParts.Where(pp => pp.ParsesOperations == null || pp.ParsesOperations.Value == operationExpected))
                 resultFound = resultFound || parserPart.TryParse(expression, currentPosition, out symbol);
 
             if (symbol != null)

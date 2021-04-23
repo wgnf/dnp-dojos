@@ -8,7 +8,7 @@ namespace CltCalculator.Parsing.Parts
 {
     public class ConstantParserPart : IParserPart
     {
-        public bool ParsesOperations => false;
+        public bool? ParsesOperations => false;
 
         public bool TryParse(string expression, int currentPosition, out Symbol symbol)
         {

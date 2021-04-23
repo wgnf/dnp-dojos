@@ -4,40 +4,35 @@ using CltCalculator.Models;
 
 namespace CltCalculator.Parsing.Parts
 {
-    public class OperationParserPart : IParserPart
+    public class ParenthesisParserPart : IParserPart
     {
-        public bool? ParsesOperations => true;
-
+        public bool? ParsesOperations => null;
+        
         public bool TryParse(string expression, int currentPosition, out Symbol symbol)
         {
             if (string.IsNullOrWhiteSpace(expression))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(expression));
-            
+
             var currentChar = expression[currentPosition];
+            var startingPosition = currentPosition;
             symbol = null;
 
             if (!TryGetSymbolTypeFromChar(currentChar, out var symbolType)) return false;
 
-            symbol = new Symbol(symbolType, currentPosition);
+            symbol = new Symbol(symbolType, startingPosition);
             return true;
         }
 
         private static bool TryGetSymbolTypeFromChar(char currentChar, out SymbolType symbolType)
         {
-            symbolType = SymbolType.Addition;
+            symbolType = SymbolType.OpenParenthesis;
             switch (currentChar)
             {
-                case '+':
-                    symbolType = SymbolType.Addition;
+                case '(':
+                    symbolType = SymbolType.OpenParenthesis;
                     break;
-                case '-':
-                    symbolType = SymbolType.Subtraction;
-                    break;
-                case '*':
-                    symbolType = SymbolType.Multiplication;
-                    break;
-                case '/':
-                    symbolType = SymbolType.Division;
+                case ')':
+                    symbolType = SymbolType.CloseParenthesis;
                     break;
                 default:
                     return false;

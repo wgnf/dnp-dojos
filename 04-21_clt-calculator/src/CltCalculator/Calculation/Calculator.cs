@@ -25,13 +25,15 @@ namespace CltCalculator.Calculation
             if (TryConsiderOnlyOneConstantSymbol(symbols, out var result))
                 return result;
 
-            var found = TryFindOperation(symbols, out var foundOperation);
-
-            if (!found)
-                throw new InvalidOperationException(
-                    "Did not find an operation even though we're not finished calculating yet");
-
-            CalculateSymbol(symbols, foundOperation);
+            if (symbols.Any(s => s.Type == SymbolType.OpenParenthesis))
+            {
+                CalculateResultFromSymbolsInParentheses(symbols);
+                // ReSharper disable once TailRecursiveCall
+                return CalculateResultFromSymbols(symbols);
+            }
+            
+            FindAndCalculateSymbol(symbols);
+            
             // ReSharper disable once TailRecursiveCall
             return CalculateResultFromSymbols(symbols);
         }
@@ -48,6 +50,71 @@ namespace CltCalculator.Calculation
 
             result = firstAndOnlySymbol.Value.Value;
             return true;
+        }
+
+        private static void CalculateResultFromSymbolsInParentheses(IList<Symbol> symbols)
+        {
+            if (!TryGetLastOpenParenthesis(symbols, out var open))
+                throw new InvalidOperationException("Did not find an open parenthesis but one was expected");
+
+            if (!TryGetClosingParenthesisForOpen(symbols, open, out var close))
+                throw new InvalidOperationException(
+                    $"Did not find a matching closing parenthesis for the open parenthesis at position {open.ZeroBasedPositionInExpression + 1}");
+
+            var workingList = GetWorkingListForParentheses(symbols, open, close);
+            var result = CalculateResultFromSymbols(workingList.ToList());
+            
+            ReplaceParenthesesWithResult(symbols, workingList, result, open, close);
+        }
+
+        private static bool TryGetLastOpenParenthesis(IEnumerable<Symbol> symbols, out Symbol open)
+        {
+            open = symbols.LastOrDefault(s => s.Type == SymbolType.OpenParenthesis);
+            return open != null;
+        }
+
+        private static bool TryGetClosingParenthesisForOpen(IList<Symbol> symbols, Symbol open, out Symbol close)
+        {
+            var indexOfOpen = symbols.IndexOf(open);
+            var subLiftOfOpen = symbols.TakeLast(symbols.Count - (indexOfOpen + 1));
+            close = subLiftOfOpen.FirstOrDefault(s => s.Type == SymbolType.CloseParenthesis);
+            return close != null;
+        }
+
+        private static IList<Symbol> GetWorkingListForParentheses(IList<Symbol> symbols, Symbol open, Symbol close)
+        {
+            var indexOfOpen = symbols.IndexOf(open);
+            var indexOfClose = symbols.IndexOf(close);
+            var workingList = symbols.Skip(indexOfOpen + 1).Take(indexOfClose - (indexOfOpen + 1)).ToList();
+
+            return workingList;
+        }
+
+        private static void ReplaceParenthesesWithResult(
+            IList<Symbol> symbols,
+            IEnumerable<Symbol> workingList,
+            decimal result, 
+            Symbol open,
+            Symbol close)
+        {
+            var resultConstant = new Symbol(SymbolType.Constant, open.ZeroBasedPositionInExpression, Value: result);
+            
+            foreach (var processedItem in workingList.Concat(new[] {close}))
+                symbols.Remove(processedItem);
+
+            var indexOfOpen = symbols.IndexOf(open);
+            symbols[indexOfOpen] = resultConstant;
+        }
+        
+        private static void FindAndCalculateSymbol(IList<Symbol> symbols)
+        {
+            var found = TryFindOperation(symbols, out var foundOperation);
+
+            if (!found)
+                throw new InvalidOperationException(
+                    "Did not find an operation even though we're not finished calculating yet");
+
+            CalculateSymbol(symbols, foundOperation);
         }
 
         private static bool TryFindOperation(IList<Symbol> symbols, out Symbol operation)

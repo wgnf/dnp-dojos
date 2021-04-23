@@ -96,10 +96,10 @@ namespace CltCalculator.Calculation
             var index = symbols.IndexOf(operation);
             if (!TryGetConstantLeftOf(index, symbols, out var left))
                 throw new InvalidOperationException(
-                    $"Could not find value left of {operation.Type} at {operation.ZeroBasedPositionInExpression + 1}");
+                    $"Could not find value left of {operation.Type} at position {operation.ZeroBasedPositionInExpression + 1}");
             if (!TryGetConstantRightOf(index, symbols, out var right))
                 throw new InvalidOperationException(
-                    $"Could not find value right of {operation.Type} at {operation.ZeroBasedPositionInExpression + 1}");
+                    $"Could not find value right of {operation.Type} at position {operation.ZeroBasedPositionInExpression + 1}");
 
             return (left, right);
         }

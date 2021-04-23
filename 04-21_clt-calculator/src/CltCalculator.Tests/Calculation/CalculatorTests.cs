@@ -86,13 +86,17 @@ namespace CltCalculator.Tests.Calculation
                 new Symbol(SymbolType.Addition, 0),
                 new Symbol(SymbolType.Constant, 0, 1, 2),
                 new Symbol(SymbolType.Multiplication, 0),
-                new Symbol(SymbolType.Constant, 0, 1, 3)
+                new Symbol(SymbolType.Constant, 0, 1, 3),
+                new Symbol(SymbolType.Division, 0),
+                new Symbol(SymbolType.Constant, 0, 1, 4),
+                new Symbol(SymbolType.Subtraction, 0),
+                new Symbol(SymbolType.Constant, 0, 1, 5)
             };
 
             var result = sut.Calculate(symbols);
             result
                 .Should()
-                .Be(7);
+                .Be((decimal)-2.5);
         }
     }
 }

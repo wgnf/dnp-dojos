@@ -20,8 +20,15 @@ namespace CltCalculator
                 Console.WriteLine("Enter something that should be calculated:");
                 var expression = Console.ReadLine();
 
-                var result = Calculate(expression);
-                Console.WriteLine($"Result: {result}\n\n");
+                try
+                {
+                    var result = Calculate(expression);
+                    Console.WriteLine($"Result: {result}\n\n");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error: {e.Message}");
+                }
             }
         }
 

@@ -1,44 +1,43 @@
 ﻿using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Globalization;
-using CltCalculator.Calculation;
-using CltCalculator.Contracts.Calculation;
-using CltCalculator.Contracts.Parsing;
-using CltCalculator.Parsing;
+using System.Threading.Tasks;
 
 namespace CltCalculator
 {
     public static class Program
     {
-        private static readonly IParser Parser = ParserFactory.GetParser();
-        private static readonly ICalculator Calculator = new Calculator();
-        
-        public static void Main()
+        public static Task<int> Main(string[] arguments)
         {
-            Console.WriteLine("Calculator!");
-            
-            while (true)
+            // c.f.:
+            // https://github.com/dotnet/command-line-api/blob/master/docs/Your-first-app-with-System-CommandLine.md
+            var rootCommand = new RootCommand
             {
-                Console.WriteLine("Enter something that should be calculated:");
-                var expression = Console.ReadLine();
+                new Argument<string>("expression", "The expression to calculate"),
+                new Option<bool>("--diagnostic", () => false, "Whether or not diagnostic information should be printed")
+            };
+            
+            rootCommand.Handler = CommandHandler.Create<string, bool, IConsole>(HandleExpressionCalculation);
 
-                try
-                {
-                    var result = Calculate(expression);
-                    Console.WriteLine($"Result: {result.ToString(CultureInfo.InvariantCulture)}\n\n");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Error: {e.Message}");
-                }
-            }
+            return rootCommand.InvokeAsync(arguments);
         }
 
-        private static decimal Calculate(string expression)
+        private static void HandleExpressionCalculation(string expression, bool diagnostic, IConsole console)
         {
-            var symbols = Parser.Parse(expression);
-            var result = Calculator.Calculate(symbols);
-
-            return result;
+            try
+            {
+                var expressionCalculator = ExpressionCalculatorFactory.GetExpressionCalculator();
+                var result = expressionCalculator.Calculate(expression);
+                console.Out.WriteLine($"Result: {result.ToString(CultureInfo.InvariantCulture)}");
+            }
+            catch (Exception e)
+            {
+                console.Error.WriteLine($"Error: {e.Message}");
+                if (diagnostic)
+                    console.Error.WriteLine($"\n\n{e.StackTrace}");
+            }
         }
     }
 }
